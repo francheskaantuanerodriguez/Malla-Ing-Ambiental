@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Malla Curricular - //Colocas el nombre//</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .malla {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .ciclo {
+        background: #ffffff;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .ciclo h2 {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .curso {
+        padding: 10px;
+        margin-bottom: 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        user-select: none;
+        transition: 0.3s;
+        background: #e3e8ee;
+    }
+
+    .curso:hover {
+        transform: scale(1.02);
+    }
+
+    .aprobado {
+        background: #a5d6a7;
+        text-decoration: line-through;
+        color: #2e7d32;
+    }
+
+    .bloqueado {
+        background: #ef9a9a;
+        color: #7f0000;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .nota {
+        margin-top: 25px;
+        font-size: 14px;
+        text-align: center;
+        color: #555;
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Malla Curricular – //Colocas el nombre//</h1>
+
+<div class="malla">
+
+    <!-- CICLO 1 -->
+    <div class="ciclo">
+        <h2>Ciclo 1</h2>
+        <div class="curso" data-id="mate1">Matemática</div>
+        <div class="curso" data-id="intro">Introducción a la carrera</div>
+    </div>
+
+    <!-- CICLO 2 -->
+    <div class="ciclo">
+        <h2>Ciclo 2</h2>
+        <div class="curso bloqueado" data-id="calculo"
+             data-prereq="mate1">Cálculo</div>
+        <div class="curso bloqueado" data-id="fisica"
+             data-prereq="mate1">Física</div>
+    </div>
+
+    <!-- CICLO 3 -->
+    <div class="ciclo">
+        <h2>Ciclo 3</h2>
+        <div class="curso bloqueado" data-id="estadistica"
+             data-prereq="calculo">Estadística</div>
+        <div class="curso bloqueado" data-id="metodos"
+             data-prereq="calculo,fisica">Métodos Numéricos</div>
+    </div>
+
+</div>
+
+<p class="nota">
+    ✔ Haz clic en un curso para marcarlo como aprobado.<br>
+    🔒 Los cursos bloqueados se habilitan al cumplir sus prerrequisitos.
+</p>
+
+<script>
+    const cursos = document.querySelectorAll('.curso');
+
+    cursos.forEach(curso => {
+        curso.addEventListener('click', () => {
+            if (curso.classList.contains('bloqueado')) return;
+
+            curso.classList.toggle('aprobado');
+            actualizarBloqueos();
+        });
+    });
+
+    function actualizarBloqueos() {
+        cursos.forEach(curso => {
+            const prereq = curso.dataset.prereq;
+            if (!prereq) return;
+
+            const requisitos = prereq.split(',');
+            const cumplidos = requisitos.every(id =>
+                document.querySelector(`[data-id="${id}"]`)
+                .classList.contains('aprobado')
+            );
+
+            if (cumplidos) {
+                curso.classList.remove('bloqueado');
+            } else {
+                curso.classList.add('bloqueado');
+                curso.classList.remove('aprobado');
+            }
+        });
+    }
+
+    actualizarBloqueos();
+</script>
+
+</body>
+</html>
